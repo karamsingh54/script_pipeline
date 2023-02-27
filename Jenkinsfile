@@ -1,19 +1,20 @@
+/* This is a simple Jenkins pipeline created by Karam */
+
 pipeline {
     agent any
-
     stages {
-        stage('Download data from github') {
+        stage('First step of pipeline is to Download data from github') {
             steps {
                 git branch: 'main', url: 'https://github.com/karamsingh54/jenkinstest.git'
             }
         }
 
-        stage('Transfer data') {
+        stage('Transfer data from Jenkins server to docker-ansible server using publish over ssh') {
             steps {
                  sshPublisher(publishers: [sshPublisherDesc(configName: 'jenkins1', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'rsync -e ssh /var/lib/jenkins/workspace/ssh/* root@172.31.59.64:/raju', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
             }
         }
-        stage('Docker build') {
+        stage('Building docker image from Dockerfile,removing old version of docker image and pushing it on dockerhub account') {
             steps {
                    sshPublisher(publishers: [sshPublisherDesc(configName: 'docker1', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''cd /tinku
                    docker build -t $JOB_NAME:v$BUILD_ID .
@@ -26,7 +27,7 @@ pipeline {
 
             }
         }
-        stage('ansible playbook') {
+        stage('ansible playbook for creating the final web container on webnode') {
             steps {
                 sshPublisher(publishers: [sshPublisherDesc(configName: 'docker1', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'ansible-playbook /trial/ansi.yml', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
 
