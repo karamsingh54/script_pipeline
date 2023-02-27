@@ -1,4 +1,4 @@
-/* This is a simple Jenkins pipeline created by Karam */
+/* This is a simple Jenkins pipeline created by Karam singh */
 
 pipeline {
     agent any
