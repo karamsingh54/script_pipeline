@@ -11,12 +11,12 @@ pipeline {
 
         stage('Transfer data from Jenkins server to docker-ansible server using publish over ssh') {
             steps {
-                 sshPublisher(publishers: [sshPublisherDesc(configName: 'jenkins1', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'rsync -e ssh /var/lib/jenkins/workspace/ssh/* root@172.31.59.64:/raju', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                 sshPublisher(publishers: [sshPublisherDesc(configName: 'jenkins1', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'rsync -e ssh /var/lib/jenkins/workspace/devops_pipeline/Dockerfile* root@172.31.59.64:/trial', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
             }
         }
         stage('Building docker image from Dockerfile,removing old version of docker image and pushing it on dockerhub account') {
             steps {
-                   sshPublisher(publishers: [sshPublisherDesc(configName: 'docker1', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''cd /tinku
+                   sshPublisher(publishers: [sshPublisherDesc(configName: 'docker1', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''cd /trial
                    docker build -t $JOB_NAME:v$BUILD_ID .
                    docker image tag $JOB_NAME:v$BUILD_ID karamsingh54/$JOB_NAME:v$BUILD_ID
                    docker image tag $JOB_NAME:v$BUILD_ID karamsingh54/$JOB_NAME:latest
